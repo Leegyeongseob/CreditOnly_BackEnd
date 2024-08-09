@@ -1,39 +1,55 @@
 package com.kh.CreditOnly_BackEnd.entity;
 
-
 import com.kh.CreditOnly_BackEnd.constant.Authority;
 import com.kh.CreditOnly_BackEnd.constant.Sex;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
-@Table(name="Member_TB")
+@Table(name = "Member_TB")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="member_id")
+    @Column(name = "member_id")
     private Long id;
+
     @Column(unique = true)
     private String email;
+
     private String pwd;
+
     private String name;
+
     @Enumerated(EnumType.STRING)
     private Sex sex;
+
     private String profileImgUrl;
+
     @Column(length = 13)
     private String registrationNumber;
+
     @Enumerated(EnumType.STRING)
     private Authority authority;
 
-    // 엔티티가 영속성 컨텍스트에 저장되기 전 자동으로 호출되는 메서드(주민번호로 성별 저장)
+    // 생성 날짜 필드 추가
+    @Column(updatable = false) // 생성 후 값이 변경되지 않도록 설정
+    private LocalDateTime date;
+
+    // 엔티티가 영속성 컨텍스트에 저장되기 전 자동으로 호출되는 메서드 - DB 저장시 현재 날짜 자동 저장
     @PrePersist
-    @PreUpdate
+    private void prePersist() {
+        setSexBasedOnRegistrationNumber();
+        this.date = LocalDateTime.now(); // 현재 날짜와 시간으로 설정
+    }
+
     private void setSexBasedOnRegistrationNumber() {
         String regNumberStr = this.registrationNumber;
         if (regNumberStr != null && regNumberStr.length() == 13) {

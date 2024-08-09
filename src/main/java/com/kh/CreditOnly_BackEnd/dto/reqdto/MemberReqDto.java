@@ -20,8 +20,6 @@ public class MemberReqDto {
     private String name;
     @Column(length = 13)
     private String registrationNumber;
-    private String nickName;
-    private String coupleName;
 
 
     public MemberEntity toMemberEntity(PasswordEncoder passwordEncoder) {
