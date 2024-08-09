@@ -2,6 +2,7 @@ package com.kh.CreditOnly_BackEnd.service;
 
 
 
+import com.kh.CreditOnly_BackEnd.constant.Authority;
 import com.kh.CreditOnly_BackEnd.dto.TokenDto;
 import com.kh.CreditOnly_BackEnd.dto.reqdto.*;
 import com.kh.CreditOnly_BackEnd.entity.MemberEntity;
@@ -20,8 +21,9 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @Slf4j
@@ -38,12 +40,19 @@ public class AuthService {
     //회원가입
     public String signup(MemberReqDto requestDto) {
         try {
-            //Dto to Entity
-            MemberEntity member = requestDto.toMemberEntity(passwordEncoder);
+            // 이메일에 따라 권한을 설정
+            String email = requestDto.getEmail();
+            determineAuthority(email,requestDto);
+
+            // Dto to Entity
+            MemberEntity member = requestDto.toMemberEntity(passwordEncoder,requestDto.getAuthority());
+
+            // 데이터베이스에 저장
             memberRepository.saveAndFlush(member);
             em.clear();
+
             return "Success";
-        }catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             // 데이터 접근 예외 처리 (예: 데이터베이스 접근 오류)
             return "회원가입 실패: 데이터베이스 접근 중 오류가 발생했습니다.";
         } catch (Exception e) {
@@ -51,16 +60,32 @@ public class AuthService {
             return "회원가입 중 오류가 발생했습니다.";
         }
     }
+    //이메일에 따라 권한을 결정하는 메소드
+    private void determineAuthority(String email,MemberReqDto requestDto) {
+        // 특정 이메일에 대해 ROLE_ADMIN, 그 외에는 ROLE_USER 설정
+        List<String> adminEmails = Arrays.asList(
+                "mkk700000@naver.com",
+                "98tmddyddl@gmail.com",
+                "sungjin5129@gmail.com",
+                "can34879@gmail.com",
+                "00bsj2@naver.com",
+                "ehdudloro1018@gmail.com"
+        );
+        // 이메일이 adminEmails 리스트에 포함되어 있는지 확인
+        if (adminEmails.contains(email)) {
+            requestDto.setAuthority(Authority.ROLE_ADMIN);
+        } else {
+            requestDto.setAuthority(Authority.ROLL_USER);
+        }
+    }
     // 이메일 중복확인
     public boolean isExistEmail(String Email){
-
         return memberRepository.existsByEmail(Email);
     }
 
     // 로그인
     public TokenDto login(LoginReqDto requestDto) {
         UsernamePasswordAuthenticationToken authenticationToken = requestDto.toAuthentication();
-
         Authentication authentication = managerBuilder.getObject().authenticate(authenticationToken);
         return tokenProvider.generateTokenDto(authentication);
     }
@@ -81,17 +106,33 @@ public class AuthService {
         }
     }
     // 비밀번호 찾기
-    public String findPwdResult(FindPwdDto findPwdDto){
+    public String findPwdResult(FindPwdReqDto findPwdDto){
         Optional<MemberEntity> memberEntityOpt =memberRepository.findPwdByEmailAndNameAndRegistrationNumber(findPwdDto.getEmail(),findPwdDto.getName(),findPwdDto.getRegistrationNumber());
         if(memberEntityOpt.isPresent()){
-            MemberEntity memberEntity = memberEntityOpt.get();
-            String temporaryPwd = UUID.randomUUID().toString().substring(0, 8);
-            memberEntity.setPwd(passwordEncoder.encode(temporaryPwd));
-            memberRepository.save(memberEntity);
-            return temporaryPwd;
+            return"Exist";
         }
         else{
             return"";
+        }
+    }
+    // 비밀번호 재설정
+    public String updatePwd(UpdatePwdReqDto updatePwdReqDto){
+        Optional<MemberEntity> memberEntityOpt = memberRepository.findByEmail(updatePwdReqDto.getEmail());
+        try {
+            if (memberEntityOpt.isPresent()) {
+                MemberEntity member = memberEntityOpt.get();
+                member.setPwd(passwordEncoder.encode(updatePwdReqDto.getPwd()));
+                memberRepository.saveAndFlush(member);
+                em.clear();
+
+            }
+            return "Success";
+        } catch (DataAccessException e) {
+            // 데이터 접근 예외 처리 (예: 데이터베이스 접근 오류)
+            return "비밀번호 수정 실패: 데이터베이스 접근 중 오류가 발생했습니다.";
+        } catch (Exception e) {
+            // 그 외의 예외 처리
+            return "비밀번호 수정 중 오류가 발생했습니다.";
         }
     }
 }

@@ -16,8 +16,6 @@ public class MemberResDto {
     private String name;
     @Column(length = 13)
     private int registrationNumber;
-    private String nickName;
-    private String coupleName;
 
 
     public static MemberResDto of(MemberEntity member){

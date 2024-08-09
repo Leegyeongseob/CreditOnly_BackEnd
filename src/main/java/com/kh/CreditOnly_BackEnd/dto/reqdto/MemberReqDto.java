@@ -20,15 +20,16 @@ public class MemberReqDto {
     private String name;
     @Column(length = 13)
     private String registrationNumber;
+    private Authority authority;
 
 
-    public MemberEntity toMemberEntity(PasswordEncoder passwordEncoder) {
+    public MemberEntity toMemberEntity(PasswordEncoder passwordEncoder,Authority authority) {
         return MemberEntity.builder()
                 .email(email)
                 .pwd(passwordEncoder.encode(pwd))
                 .name(name)
                 .registrationNumber(registrationNumber)
-                .authority(Authority.ROLL_USER)
+                .authority(authority)
                 .build();
     }
 

@@ -40,8 +40,6 @@ public class AuthController {
     public ResponseEntity<TokenDto> login(@RequestBody LoginReqDto requestDto) {
         return ResponseEntity.ok(authService.login(requestDto));
     }
-
-
     //아이디 찾기
     @PostMapping("/findIdResult")
     public ResponseEntity<String> findIdResult(@RequestBody FindIdReqDto findIdReqDto){
@@ -49,8 +47,13 @@ public class AuthController {
     }
     //비밀번호 찾기
     @PostMapping("/findPwdResult")
-    public ResponseEntity<String> fondPwdResult(@RequestBody FindPwdDto findPwdDto){
+    public ResponseEntity<String> fondPwdResult(@RequestBody FindPwdReqDto findPwdDto){
         return ResponseEntity.ok(authService.findPwdResult(findPwdDto));
+    }
+    //비밀번호 재설정
+    @PostMapping("/updatePwd")
+    public ResponseEntity<String> updatePwd(@RequestBody UpdatePwdReqDto updatePwdReqDto){
+        return ResponseEntity.ok(authService.updatePwd(updatePwdReqDto));
     }
 
 }

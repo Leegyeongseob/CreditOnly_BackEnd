@@ -8,7 +8,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FindPwdDto {
+public class FindPwdReqDto {
     private String email;
     private String name;
     private String registrationNumber;
