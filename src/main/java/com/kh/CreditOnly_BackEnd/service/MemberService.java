@@ -69,8 +69,7 @@ public class MemberService {
                     .orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."));
             // 회원 정보 삭제
             memberRepository.delete(memberEntity);
-
-            return "회원 정보 및 관련 커플 정보가 삭제되었습니다.";
+            return "회원 정보가 삭제되었습니다.";
         } catch (Exception e) {
             return "회원 정보 삭제 중 오류가 발생했습니다.: " + e.getMessage();
         }
