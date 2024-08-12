@@ -7,6 +7,8 @@ import com.kh.CreditOnly_BackEnd.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +20,16 @@ import java.util.Map;
 @RequestMapping("/member")
 public class MemberController {
     private final MemberService memberService;
+
+    // 토큰으로 이메일 불러오기
+    @GetMapping("/getEmail")
+    public ResponseEntity<String> getEmail(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        log.info("auth: "+ auth);
+        String email = memberService.getEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        return ResponseEntity.ok(email);
+    }
+
     // 정보 불러오기
     @PostMapping("/info")
     public ResponseEntity<MemberResDto> memberAxios(@RequestBody Map<String,String> email){

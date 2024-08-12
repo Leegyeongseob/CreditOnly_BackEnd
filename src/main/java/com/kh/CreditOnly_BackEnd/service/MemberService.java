@@ -104,4 +104,9 @@ public class MemberService {
             return "notExist";
         }
     }
+    // 토큰으로 이메일 불러오기
+    public String getEmail(String number) {
+        MemberEntity member = memberRepository.findById(Long.parseLong(number)).orElseThrow(()-> new RuntimeException("해당 회원이 존재하지 않습니다."));
+        return member.getEmail();
+    }
 }
