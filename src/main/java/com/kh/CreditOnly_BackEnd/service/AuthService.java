@@ -11,6 +11,8 @@ import com.kh.CreditOnly_BackEnd.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -21,9 +23,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -34,6 +34,7 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
+    private final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
     @PersistenceContext
     EntityManager em;
@@ -96,14 +97,33 @@ public class AuthService {
     }
 
     // 아이디 찾기
-    public String findIdResult(FindIdReqDto findIdReqDto){
-        Optional<MemberEntity> memberEntity = memberRepository.findEmailByNameAndRegistrationNumber(findIdReqDto.getName(),findIdReqDto.getRegistrationNumber());
-        if(memberEntity.isPresent()){
-            return memberEntity.get().getEmail();
+    public List<String> findIdResult(FindIdReqDto findIdReqDto) {
+        List<String> emailList = new ArrayList<>();
+
+        // 입력값 유효성 검사
+        if (findIdReqDto == null || findIdReqDto.getName() == null || findIdReqDto.getRegistrationNumber() == null) {
+            logger.error("Invalid request data: {}", findIdReqDto);
+            throw new IllegalArgumentException("Invalid input data. Name and Registration Number are required.");
         }
-        else{
-            return "";
+
+        try {
+            // 데이터베이스 조회
+            List<MemberEntity> members  = memberRepository.findEmailByNameAndRegistrationNumber(
+                    findIdReqDto.getName(),
+                    findIdReqDto.getRegistrationNumber()
+            );
+
+            // 이메일 리스트에 추가
+            for (MemberEntity member : members) {
+                emailList.add(member.getEmail());
+            }
+        } catch (Exception ex) {
+            // 예외 처리 및 로그 기록
+            logger.error("Error occurred while finding emails: {}", ex.getMessage(), ex);
+            throw new RuntimeException("An error occurred while processing your request. Please try again later.");
         }
+
+        return emailList;
     }
     // 비밀번호 찾기
     public String findPwdResult(FindPwdReqDto findPwdDto){

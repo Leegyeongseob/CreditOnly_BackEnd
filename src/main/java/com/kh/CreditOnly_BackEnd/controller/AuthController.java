@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -42,7 +43,7 @@ public class AuthController {
     }
     //아이디 찾기
     @PostMapping("/findIdResult")
-    public ResponseEntity<String> findIdResult(@RequestBody FindIdReqDto findIdReqDto){
+    public ResponseEntity<List<String>> findIdResult(@RequestBody FindIdReqDto findIdReqDto){
         return ResponseEntity.ok(authService.findIdResult(findIdReqDto));
     }
     //비밀번호 찾기
