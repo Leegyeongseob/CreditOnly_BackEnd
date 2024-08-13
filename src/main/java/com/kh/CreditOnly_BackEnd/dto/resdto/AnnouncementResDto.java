@@ -7,9 +7,10 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class HelpResDto {
+public class AnnouncementResDto {
     private Long id;
     private String title;
+    private String classTitle;
     private String contents;
     private String createdDate;
 }

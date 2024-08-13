@@ -1,4 +1,4 @@
-package com.kh.CreditOnly_BackEnd.dto.resdto;
+package com.kh.CreditOnly_BackEnd.dto.reqdto;
 
 import lombok.*;
 
@@ -7,9 +7,9 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class HelpResDto {
-    private Long id;
+public class AnnouncementReqDto {
+    private String email;
+    private String classTitle;
     private String title;
     private String contents;
-    private String createdDate;
 }
