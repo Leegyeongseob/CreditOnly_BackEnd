@@ -2,8 +2,10 @@ package com.kh.CreditOnly_BackEnd.service;
 
 
 import com.kh.CreditOnly_BackEnd.constant.Sex;
+import com.kh.CreditOnly_BackEnd.entity.AnnouncementEntity;
 import com.kh.CreditOnly_BackEnd.entity.HelpEntity;
 import com.kh.CreditOnly_BackEnd.entity.MemberEntity;
+import com.kh.CreditOnly_BackEnd.repository.AnnouncementRepository;
 import com.kh.CreditOnly_BackEnd.repository.HelpRepository;
 import com.kh.CreditOnly_BackEnd.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import java.util.*;
 public class MainService {
     private final MemberRepository memberRepository;
     private final HelpRepository helpRepository;
+    private final AnnouncementRepository announcementRepository;
 
     @PersistenceContext
     EntityManager em;
@@ -38,21 +41,38 @@ public class MainService {
             throw new RuntimeException("Member not found");
         }
     }
-    //
-    public List<Map<String, Object>> dataSearch(String email,String data){
+    // 검색창에서 전체 검색
+    public List<Map<String, Object>> dataSearch(String email, String data) {
         List<Map<String, Object>> resultList = new ArrayList<>();
         try {
             // 1. 이메일로 필터링된 결과를 가져옵니다.
-            List<HelpEntity> helpEntities = helpRepository.findByEmail(email);
+            Optional<List<HelpEntity>> helpEntitiesOpt = helpRepository.findByEmail(email);
+            if (helpEntitiesOpt.isPresent()) {
+                List<HelpEntity> helpEntities = helpEntitiesOpt.get();
+                // 2. 가져온 결과에서 데이터로 추가 필터링합니다.
+                for (HelpEntity helpEntity : helpEntities) {
+                    if (helpEntity.getTitle().contains(data) || helpEntity.getContents().contains(data)) {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("id", helpEntity.getId());
+                        map.put("page", "help");
+                        map.put("title", helpEntity.getTitle());
+                        map.put("contents", helpEntity.getContents());
+                        resultList.add(map);
+                    }
+                }
+            }
 
-            // 2. 가져온 결과에서 데이터로 추가 필터링합니다.
-            for (HelpEntity helpEntity : helpEntities) {
-                if (helpEntity.getTitle().contains(data) || helpEntity.getContents().contains(data)) {
+            // 공지사항에 관련된 데이터를 가져옵니다.
+            Optional<List<AnnouncementEntity>> announcementEntitiesOpt = announcementRepository.findByTitleOrContentsContains(data, data);
+            if (announcementEntitiesOpt.isPresent()) {
+                List<AnnouncementEntity> announcementEntities = announcementEntitiesOpt.get();
+                for (AnnouncementEntity announcementEntity : announcementEntities) {
                     Map<String, Object> map = new HashMap<>();
-                    map.put("id", helpEntity.getId());
-                    map.put("page", "help");
-                    map.put("title", helpEntity.getTitle());
-                    map.put("contents", helpEntity.getContents());
+                    map.put("id", announcementEntity.getId());
+                    map.put("page", "announcement");
+                    map.put("classTitle", announcementEntity.getClassTitle());
+                    map.put("title", announcementEntity.getTitle());
+                    map.put("contents", announcementEntity.getContents());
                     resultList.add(map);
                 }
             }
@@ -65,4 +85,5 @@ public class MainService {
         }
         return resultList;
     }
+
 }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,9 +34,15 @@ public class HelpService {
 
         helpRepository.save(helpEntity);
     }
-
+    // 이메일로 Help 요청을 조회하고, 결과를 HelpResDto로 변환
     public List<HelpResDto> getHelpRequestsByEmail(String email) {
-        return helpRepository.findByEmail(email).stream()
+        // 이메일로 Help 요청을 조회합니다.
+        Optional<List<HelpEntity>> optionalHelpEntities = helpRepository.findByEmail(email);
+
+        // Optional을 처리하여 리스트를 변환합니다.
+        return optionalHelpEntities
+                .orElseGet(List::of) // Optional이 비어 있을 경우 빈 리스트를 반환합니다.
+                .stream()
                 .map(entity -> new HelpResDto(
                         entity.getId(), // ID를 추가
                         entity.getTitle(),
