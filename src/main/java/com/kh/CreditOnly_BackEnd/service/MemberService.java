@@ -1,6 +1,7 @@
 package com.kh.CreditOnly_BackEnd.service;
 
 
+import com.kh.CreditOnly_BackEnd.constant.Authority;
 import com.kh.CreditOnly_BackEnd.dto.reqdto.MemberUpdateReqDto;
 import com.kh.CreditOnly_BackEnd.dto.resdto.MemberResDto;
 import com.kh.CreditOnly_BackEnd.entity.MemberEntity;
@@ -15,9 +16,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -107,5 +107,13 @@ public class MemberService {
     public String getEmail(String number) {
         MemberEntity member = memberRepository.findById(Long.parseLong(number)).orElseThrow(()-> new RuntimeException("해당 회원이 존재하지 않습니다."));
         return member.getEmail();
+    }
+
+    // 관리자 이메일 목록 가져오기
+    public List<String> getAdminEmails() {
+        // Authority.ROLE_ADMIN을 기준으로 이메일 목록을 가져옵니다.
+        return memberRepository.findByAuthority(Authority.ROLE_ADMIN).stream()
+                .map(MemberEntity::getEmail)
+                .collect(Collectors.toList());
     }
 }

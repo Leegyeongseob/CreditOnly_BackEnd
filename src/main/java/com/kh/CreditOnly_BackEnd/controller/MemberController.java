@@ -3,14 +3,17 @@ package com.kh.CreditOnly_BackEnd.controller;
 
 import com.kh.CreditOnly_BackEnd.dto.reqdto.MemberUpdateReqDto;
 import com.kh.CreditOnly_BackEnd.dto.resdto.MemberResDto;
+import com.kh.CreditOnly_BackEnd.entity.MemberEntity;
 import com.kh.CreditOnly_BackEnd.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -61,4 +64,9 @@ public class MemberController {
         }
     }
 
+    // 관리자 이메일 목록 가져오기
+    @GetMapping("/adminEmails")
+    public List<String> getAdminEmails() {
+        return memberService.getAdminEmails();
+    }
 }
