@@ -102,4 +102,17 @@ public class AnnouncementService {
         anCheck.setRead(true);
         anCheckRepository.save(anCheck);
     }
+
+    public void deleteAnnouncement(Long id) {
+        // AnCheckEntity 삭제
+        List<AnCheckEntity> anChecks = anCheckRepository.findByAnnouncement_Id(id);
+        if (!anChecks.isEmpty()) {
+            anCheckRepository.deleteAll(anChecks);
+        }
+
+        // AnnouncementEntity 삭제
+        AnnouncementEntity announcement = announcementRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Announcement not found with id " + id));
+        announcementRepository.delete(announcement);
+    }
 }

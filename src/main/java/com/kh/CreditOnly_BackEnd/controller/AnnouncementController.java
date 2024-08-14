@@ -50,4 +50,15 @@ public class AnnouncementController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+
+    // 공지사항 삭제
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteAnnouncement(@PathVariable Long id) {
+        try {
+            announcementService.deleteAnnouncement(id);
+            return ResponseEntity.ok("공지사항이 성공적으로 삭제되었습니다.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
 }
