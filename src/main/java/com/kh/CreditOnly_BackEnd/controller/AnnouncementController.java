@@ -8,6 +8,7 @@ import com.kh.CreditOnly_BackEnd.service.AnnouncementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,5 +31,23 @@ public class AnnouncementController {
     @GetMapping("/getAll")
     public List<AnnouncementResDto> getBoardsByClassTitle(@RequestParam String classTitle) {
         return announcementService.getBoardsByClassTitle(classTitle);
+    }
+
+    // 특정 이메일에 해당하는 알림 가져오기
+    @GetMapping("/notifications")
+    public ResponseEntity<List<AnnouncementResDto>> getNotificationsByEmail(@RequestParam String email) {
+        List<AnnouncementResDto> notifications = announcementService.getNotificationsByEmail(email);
+        return ResponseEntity.ok(notifications);
+    }
+
+    // 특정 알림을 읽음 처리
+    @PostMapping("/markAsRead")
+    public ResponseEntity<String> markNotificationAsRead(@RequestParam Long id, @RequestParam String email) {
+        try {
+            announcementService.markAsRead(id, email);
+            return ResponseEntity.ok("Notification marked as read");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }

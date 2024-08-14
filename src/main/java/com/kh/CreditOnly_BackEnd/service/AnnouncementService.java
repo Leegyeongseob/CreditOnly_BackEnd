@@ -1,16 +1,12 @@
 package com.kh.CreditOnly_BackEnd.service;
 
 import com.kh.CreditOnly_BackEnd.dto.reqdto.AnnouncementReqDto;
-import com.kh.CreditOnly_BackEnd.dto.reqdto.HelpReqDto;
 import com.kh.CreditOnly_BackEnd.dto.resdto.AnnouncementResDto;
-import com.kh.CreditOnly_BackEnd.dto.resdto.HelpResDto;
 import com.kh.CreditOnly_BackEnd.entity.AnCheckEntity;
 import com.kh.CreditOnly_BackEnd.entity.AnnouncementEntity;
-import com.kh.CreditOnly_BackEnd.entity.HelpEntity;
 import com.kh.CreditOnly_BackEnd.entity.MemberEntity;
 import com.kh.CreditOnly_BackEnd.repository.AnCheckRepository;
 import com.kh.CreditOnly_BackEnd.repository.AnnouncementRepository;
-import com.kh.CreditOnly_BackEnd.repository.HelpRepository;
 import com.kh.CreditOnly_BackEnd.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -74,5 +70,36 @@ public class AnnouncementService {
                         entity.getContents(),
                         entity.getCreatedDate().format(DATE_TIME_FORMATTER)))
                 .collect(Collectors.toList());
+    }
+
+    // 특정 이메일에 해당하는 알림 불러오기
+    public List<AnnouncementResDto> getNotificationsByEmail(String email) {
+        List<AnCheckEntity> anChecks = anCheckRepository.findByMember_EmailAndIsReadFalse(email);
+        return anChecks.stream()
+                .map(anCheck -> {
+                    AnnouncementEntity announcement = anCheck.getAnnouncement();
+                    return new AnnouncementResDto(
+                            announcement.getId(),
+                            announcement.getTitle(),
+                            announcement.getClassTitle(),
+                            announcement.getContents(),
+                            announcement.getCreatedDate().format(DATE_TIME_FORMATTER)
+                    );
+                })
+                .collect(Collectors.toList());
+    }
+
+    public void markAsRead(Long id, String email) {
+        // 이메일로 MemberEntity 찾기
+        MemberEntity member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+
+        // MemberEntity와 AnnouncementEntity의 ID로 AnCheckEntity 찾기
+        AnCheckEntity anCheck = anCheckRepository.findByAnnouncement_IdAndMember_Id(id, member.getId())
+                .orElseThrow(() -> new RuntimeException("Notification not found"));
+
+        // 읽음 처리
+        anCheck.setRead(true);
+        anCheckRepository.save(anCheck);
     }
 }
