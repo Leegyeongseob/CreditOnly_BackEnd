@@ -33,21 +33,21 @@ public class ElasticSearchService {
             return similarityResponse;
         }
 
-        String url = flaskServerUrl + "/api/elastic/economic/consumer_trend";
+        String url = flaskServerUrl + "/api/elastic/ecos";  // 엔드포인트 변경
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("keyword", keyword);
 
         return restTemplate.getForEntity(url, String.class, params);
     }
 
-    // 금융 회사 조회
-    public ResponseEntity<String> fetchFinancialCompany(String fncoNm, String query) {
+    // 금융 데이터 조회
+    public ResponseEntity<String> fetchFinancialData(String fncoNm, String query) {  // 메서드 이름 변경
         ResponseEntity<String> similarityResponse = performSimilaritySearch(query);
         if (similarityResponse.getStatusCode().isError()) {
             return similarityResponse;
         }
 
-        String url = flaskServerUrl + "/api/elastic/economic/financial_company";
+        String url = flaskServerUrl + "/api/elastic/economic/financial_data";  // 엔드포인트 변경
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("fncoNm", fncoNm);
 

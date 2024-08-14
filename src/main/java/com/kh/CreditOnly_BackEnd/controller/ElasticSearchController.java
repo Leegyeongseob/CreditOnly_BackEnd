@@ -35,19 +35,19 @@ public class ElasticSearchController {
     }
 
     // 소비자 동향 지수 조회 (IndexBokData)
-    @GetMapping("/economic/consumer_trend")
+    @GetMapping("/ecos")
     public ResponseEntity<String> getConsumerTrend(@RequestParam String keyword, @RequestParam String query) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("keyword", keyword);
-        return searchAndFetch("/api/elastic/economic/consumer_trend", params, query);
+        return searchAndFetch("/api/elastic/ecos", params, query);
     }
 
     // 금융 회사 조회 (IndexAllFinancialData)
-    @GetMapping("/economic/financial_company")
-    public ResponseEntity<String> getFinancialCompany(@RequestParam String fncoNm, @RequestParam String query) {
+    @GetMapping("/economic/financial_data")
+    public ResponseEntity<String> getFinancialData(@RequestParam String fncoNm, @RequestParam String query) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("fncoNm", fncoNm);
-        return searchAndFetch("/api/elastic/economic/financial_company", params, query);
+        return searchAndFetch("/api/elastic/economic/financial_data", params, query);
     }
 
     // 기업 개황 조회 (IndexDartData)
