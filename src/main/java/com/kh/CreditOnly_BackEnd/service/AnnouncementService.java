@@ -115,4 +115,15 @@ public class AnnouncementService {
                 .orElseThrow(() -> new RuntimeException("Announcement not found with id " + id));
         announcementRepository.delete(announcement);
     }
+
+    // 공지사항 수정
+    public void updateAnnouncement(Long id, AnnouncementReqDto announcementReqDto) {
+        AnnouncementEntity announcement = announcementRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Announcement not found with id " + id));
+
+        announcement.setTitle(announcementReqDto.getTitle());
+        announcement.setContents(announcementReqDto.getContents());
+
+        announcementRepository.save(announcement);
+    }
 }

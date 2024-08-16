@@ -61,4 +61,15 @@ public class AnnouncementController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+
+    // 공지사항 수정
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> updateAnnouncement(@PathVariable Long id, @RequestBody AnnouncementReqDto announcementReqDto) {
+        try {
+            announcementService.updateAnnouncement(id, announcementReqDto);
+            return ResponseEntity.ok("게시글이 성공적으로 수정되었습니다.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
 }
