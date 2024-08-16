@@ -4,9 +4,11 @@ package com.kh.CreditOnly_BackEnd.service;
 import com.kh.CreditOnly_BackEnd.constant.Sex;
 import com.kh.CreditOnly_BackEnd.entity.AnnouncementEntity;
 import com.kh.CreditOnly_BackEnd.entity.HelpEntity;
+import com.kh.CreditOnly_BackEnd.entity.InformationEntity;
 import com.kh.CreditOnly_BackEnd.entity.MemberEntity;
 import com.kh.CreditOnly_BackEnd.repository.AnnouncementRepository;
 import com.kh.CreditOnly_BackEnd.repository.HelpRepository;
+import com.kh.CreditOnly_BackEnd.repository.InformationRepository;
 import com.kh.CreditOnly_BackEnd.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +28,7 @@ public class MainService {
     private final MemberRepository memberRepository;
     private final HelpRepository helpRepository;
     private final AnnouncementRepository announcementRepository;
-
+    private final InformationRepository informationRepository;
     @PersistenceContext
     EntityManager em;
 
@@ -73,6 +75,20 @@ public class MainService {
                     map.put("classTitle", announcementEntity.getClassTitle());
                     map.put("title", announcementEntity.getTitle());
                     map.put("contents", announcementEntity.getContents());
+                    resultList.add(map);
+                }
+            }
+            //신용정보 관련된 데이터를 가져옵니다.
+            Optional<List<InformationEntity>> informationEntitiesOpt = informationRepository.findByTitleLikeOrContentLike(data, data);
+            if(informationEntitiesOpt.isPresent()){
+                List<InformationEntity> informationEntities = informationEntitiesOpt.get();
+                for(InformationEntity informationEntity : informationEntities){
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("id", informationEntity.getId());
+                    map.put("page", "information");
+                    map.put("category", informationEntity.getCategory());
+                    map.put("title", informationEntity.getTitle());
+                    map.put("contents", informationEntity.getContent());
                     resultList.add(map);
                 }
             }
