@@ -118,8 +118,9 @@ public class CommentService {
             throw new RuntimeException("댓글 삭제 권한이 없습니다.");
         }
 
+
         // 댓글 삭제
-        commentRepository.deleteById(id);
+        commentRepository.delete(commentEntity);
     }
 
     @Transactional
@@ -135,6 +136,8 @@ public class CommentService {
                 .id(commentEntity.getId())
                 .informationId(commentEntity.getInformation().getId())
                 .memberId(commentEntity.getMember().getId())
+                .memberName(commentEntity.getMember().getName())
+                .memberImg(commentEntity.getMember().getProfileImgUrl())
                 .content(commentEntity.getContent())
                 .publishedDate(commentEntity.getPublishedDate())
                 .parentId(commentEntity.getParent() != null ? commentEntity.getParent().getId() : null)

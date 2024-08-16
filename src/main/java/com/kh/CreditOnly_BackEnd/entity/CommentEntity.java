@@ -37,6 +37,9 @@ public class CommentEntity {
     @JoinColumn(name = "parent_id") // 부모 댓글을 참조하는 외래 키
     private CommentEntity parent; // 부모 댓글
 
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<CommentLikeEntity> likes; // 댓글과 좋아요
+
     // 댓글과 대댓글을 포함한 트리 구조 구현 (부모 댓글 참조)
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CommentEntity> children; // 자식 댓글들

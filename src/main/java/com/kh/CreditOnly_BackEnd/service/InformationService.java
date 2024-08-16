@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -121,4 +122,42 @@ public class InformationService {
                 .category(informationEntity.getCategory())
                 .build();
     }
+
+//    // 데이터베이스에 초기 데이터 삽입
+//    @PostConstruct
+//    public void initDatabase() {
+//        // 신용조회 정보모음 데이터 삽입 (10개)
+//        for (int i = 1; i <= 10; i++) {
+//            informationRepository.save(InformationEntity.builder()
+//                    .title("신용점수 확인 방법 " + i)
+//                    .content("신용점수를 쉽게 확인하는 방법에 대해 알아봅니다. (버전 " + i + ")")
+//                    .publishedDate(LocalDateTime.now())
+//                    .imageUrl("/images/credit-score-check-" + i + ".jpg")
+//                    .category("신용조회 정보모음")
+//                    .build());
+//        }
+//
+//        // 신용조회 어플추천 데이터 삽입 (10개)
+//        for (int i = 1; i <= 10; i++) {
+//            informationRepository.save(InformationEntity.builder()
+//                    .title("신용관리 앱 추천 " + i)
+//                    .content("신용관리를 위한 최고의 앱을 소개합니다. (추천 " + i + ")")
+//                    .publishedDate(LocalDateTime.now())
+//                    .imageUrl("/images/app-recommendation-" + i + ".jpg")
+//                    .category("신용조회 어플추천")
+//                    .build());
+//        }
+//
+//        // 신용카드와 신용정보 데이터 삽입 (10개)
+//        for (int i = 1; i <= 10; i++) {
+//            informationRepository.save(InformationEntity.builder()
+//                    .title("신용카드 사용 팁 " + i)
+//                    .content("신용카드를 현명하게 사용하는 방법에 대해 알아봅니다. (팁 " + i + ")")
+//                    .publishedDate(LocalDateTime.now())
+//                    .imageUrl("/images/credit-card-tips-" + i + ".jpg")
+//                    .category("신용카드와 신용정보")
+//                    .build());
+//        }
+//    }
+
 }
