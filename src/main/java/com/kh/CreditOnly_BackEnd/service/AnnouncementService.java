@@ -32,6 +32,7 @@ public class AnnouncementService {
     private MemberRepository memberRepository;
 
     public void createBoard(AnnouncementReqDto announcementReqDto) {
+        // 공지사항 저장
         AnnouncementEntity announcementEntity = AnnouncementEntity.builder()
                 .email(announcementReqDto.getEmail())
                 .classTitle(announcementReqDto.getClassTitle())
@@ -39,17 +40,18 @@ public class AnnouncementService {
                 .contents(announcementReqDto.getContents())
                 .build();
 
-        createAnnouncement(announcementEntity);
+        announcementRepository.save(announcementEntity);
+
+        // sendNotification이 true인 경우에만 알림 생성
+        if (announcementReqDto.isSendNotification()) {
+            createNotificationForAllUsers(announcementEntity);
+        }
     }
 
     // 게시글 작성 서비스 로직
-    public void createAnnouncement(AnnouncementEntity announcement) {
-        // 게시글 저장
-        announcementRepository.save(announcement);
-
-        // 모든 사용자 조회
+    // 모든 사용자에게 알림을 생성하는 메서드
+    private void createNotificationForAllUsers(AnnouncementEntity announcement) {
         List<MemberEntity> allUsers = memberRepository.findAll();
-        // 각 사용자에 대해 AnCheckEntity 생성
         for (MemberEntity member : allUsers) {
             AnCheckEntity anCheck = AnCheckEntity.builder()
                     .announcement(announcement)
@@ -114,16 +116,5 @@ public class AnnouncementService {
         AnnouncementEntity announcement = announcementRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Announcement not found with id " + id));
         announcementRepository.delete(announcement);
-    }
-
-    // 공지사항 수정
-    public void updateAnnouncement(Long id, AnnouncementReqDto announcementReqDto) {
-        AnnouncementEntity announcement = announcementRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Announcement not found with id " + id));
-
-        announcement.setTitle(announcementReqDto.getTitle());
-        announcement.setContents(announcementReqDto.getContents());
-
-        announcementRepository.save(announcement);
     }
 }

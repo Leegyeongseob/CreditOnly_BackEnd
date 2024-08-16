@@ -27,7 +27,6 @@ public class AnnouncementController {
         announcementService.createBoard(announcementReqDto);
         return ResponseEntity.ok("게시글이 성공적으로 등록되었습니다.");
     }
-
     @GetMapping("/getAll")
     public List<AnnouncementResDto> getBoardsByClassTitle(@RequestParam String classTitle) {
         return announcementService.getBoardsByClassTitle(classTitle);
@@ -57,17 +56,6 @@ public class AnnouncementController {
         try {
             announcementService.deleteAnnouncement(id);
             return ResponseEntity.ok("공지사항이 성공적으로 삭제되었습니다.");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    // 공지사항 수정
-    @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateAnnouncement(@PathVariable Long id, @RequestBody AnnouncementReqDto announcementReqDto) {
-        try {
-            announcementService.updateAnnouncement(id, announcementReqDto);
-            return ResponseEntity.ok("게시글이 성공적으로 수정되었습니다.");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }

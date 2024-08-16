@@ -12,4 +12,5 @@ public class AnnouncementReqDto {
     private String classTitle;
     private String title;
     private String contents;
+    private boolean sendNotification;
 }
