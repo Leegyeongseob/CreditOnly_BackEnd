@@ -2,7 +2,7 @@ package com.kh.CreditOnly_BackEnd.service;
 
 import com.kh.CreditOnly_BackEnd.entity.ChatConversationEntity;
 import com.kh.CreditOnly_BackEnd.entity.ChatMessageEntity;
-import com.kh.CreditOnly_BackEnd.entity.UserEntity;
+import com.kh.CreditOnly_BackEnd.entity.MemberEntity;
 import com.kh.CreditOnly_BackEnd.repository.ChatConversationRepository;
 import com.kh.CreditOnly_BackEnd.repository.ChatMessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +22,9 @@ public class ChatService {
         this.messageRepository = messageRepository;
     }
 
-    public ChatConversationEntity createConversation(UserEntity user, String topic) {
+    public ChatConversationEntity createConversation(MemberEntity member, String topic) {
         ChatConversationEntity conversation = new ChatConversationEntity();
-        conversation.setUser(user);
+        conversation.setMember(member);
         conversation.setTopic(topic);
         conversation.setCreatedAt(LocalDateTime.now());
         return conversationRepository.save(conversation);
@@ -39,8 +39,8 @@ public class ChatService {
         return messageRepository.save(message);
     }
 
-    public List<ChatConversationEntity> getUserConversations(UserEntity user) {
-        return conversationRepository.findByUserOrderByCreatedAtDesc(user);
+    public List<ChatConversationEntity> getUserConversations(MemberEntity member) {
+        return conversationRepository.findByMemberOrderByCreatedAtDesc(member);
     }
 
     public List<ChatMessageEntity> getConversationMessages(ChatConversationEntity conversation) {

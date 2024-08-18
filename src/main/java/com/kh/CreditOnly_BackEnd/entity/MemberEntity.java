@@ -6,6 +6,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -38,7 +39,10 @@ public class MemberEntity {
 
     @Enumerated(EnumType.STRING)
     private Authority authority;
+    private boolean active;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<String> roles;
     // 생성 날짜 필드 추가
     @Column(updatable = false) // 생성 후 값이 변경되지 않도록 설정
     private LocalDateTime date;

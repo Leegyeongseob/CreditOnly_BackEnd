@@ -4,16 +4,19 @@ package com.kh.CreditOnly_BackEnd.service;
 import com.kh.CreditOnly_BackEnd.constant.Authority;
 import com.kh.CreditOnly_BackEnd.dto.reqdto.MemberUpdateReqDto;
 import com.kh.CreditOnly_BackEnd.dto.resdto.MemberResDto;
+import com.kh.CreditOnly_BackEnd.entity.AnCheckEntity;
 import com.kh.CreditOnly_BackEnd.entity.MemberEntity;
+import com.kh.CreditOnly_BackEnd.repository.AnCheckRepository;
 import com.kh.CreditOnly_BackEnd.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.*;
@@ -26,7 +29,7 @@ import java.util.stream.Collectors;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder; // PasswordEncoder 주입
-
+    private final AnCheckRepository anCheckRepository;
     @PersistenceContext
     EntityManager em;
     // 사용자 정보 가져오기
@@ -61,13 +64,15 @@ public class MemberService {
             return "회원 정보 수정 중 오류가 발생했습니다.";
         }
     }
-    // 회원정보삭제 (커플테이블도 둘 다 없을 때 삭제해야 함.)
     public String memberDelete(String email) {
         try {
             // 회원 정보 조회
             MemberEntity memberEntity = memberRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."));
-            // 회원 정보 삭제
+            // 회원과 관련된 모든 AnCheckEntity 삭제
+            List<AnCheckEntity> anCheckEntities = anCheckRepository.findAllByMember(memberEntity);
+            anCheckRepository.deleteAll(anCheckEntities);
+            //회원 정보 삭제
             memberRepository.delete(memberEntity);
             return "회원 정보가 삭제되었습니다.";
         } catch (Exception e) {
@@ -116,4 +121,27 @@ public class MemberService {
                 .map(MemberEntity::getEmail)
                 .collect(Collectors.toList());
     }
+
+    //chatting과 관련된 service 부분
+
+    public MemberEntity getUserByUsername(String email) {
+        return memberRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+    }
+
+    public MemberEntity createMember(MemberEntity member) {
+        // 여기에 사용자 생성 로직 추가 (비밀번호 암호화 등)
+        return memberRepository.save(member);
+    }
+
+    public MemberEntity updateMember(MemberEntity member) {
+        // 여기에 사용자 업데이트 로직 추가
+        return memberRepository.save(member);
+    }
+
+    public void deleteMember(Long memberId) {
+        memberRepository.deleteById(memberId);
+    }
+
+    // 필요에 따라 추가 메서드 구현
 }

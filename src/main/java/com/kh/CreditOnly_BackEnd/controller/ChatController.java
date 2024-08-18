@@ -5,9 +5,10 @@ import com.kh.CreditOnly_BackEnd.dto.reqdto.CreateConversationDTO;
 import com.kh.CreditOnly_BackEnd.dto.reqdto.UpdateConversationDTO;
 import com.kh.CreditOnly_BackEnd.entity.ChatConversationEntity;
 import com.kh.CreditOnly_BackEnd.entity.ChatMessageEntity;
-import com.kh.CreditOnly_BackEnd.entity.UserEntity;
+import com.kh.CreditOnly_BackEnd.entity.MemberEntity;
 import com.kh.CreditOnly_BackEnd.service.ChatService;
-import com.kh.CreditOnly_BackEnd.service.UserService;
+import com.kh.CreditOnly_BackEnd.service.MemberService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,19 +19,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/chat")
+@RequiredArgsConstructor
 public class ChatController {
     private final ChatService chatService;
-    private final UserService userService;
-
-    @Autowired
-    public ChatController(ChatService chatService, UserService userService) {
-        this.chatService = chatService;
-        this.userService = userService;
-    }
+    private final MemberService memberService;
 
     @PostMapping("/conversations")
     public ResponseEntity<ChatConversationEntity> createConversation(@RequestBody CreateConversationDTO request, @AuthenticationPrincipal UserDetails userDetails) {
-        UserEntity user = userService.getUserByUsername(userDetails.getUsername());
+        MemberEntity user = memberService.getUserByUsername(userDetails.getUsername());
         ChatConversationEntity conversation = chatService.createConversation(user, request.getTopic());
         return ResponseEntity.ok(conversation);
     }
@@ -44,8 +40,8 @@ public class ChatController {
 
     @GetMapping("/conversations")
     public ResponseEntity<List<ChatConversationEntity>> getUserConversations(@AuthenticationPrincipal UserDetails userDetails) {
-        UserEntity user = userService.getUserByUsername(userDetails.getUsername());
-        List<ChatConversationEntity> conversations = chatService.getUserConversations(user);
+        MemberEntity member = memberService.getUserByUsername(userDetails.getUsername());
+        List<ChatConversationEntity> conversations = chatService.getUserConversations(member);
         return ResponseEntity.ok(conversations);
     }
 

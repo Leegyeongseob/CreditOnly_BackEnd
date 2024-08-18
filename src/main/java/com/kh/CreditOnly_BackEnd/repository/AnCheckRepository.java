@@ -1,6 +1,7 @@
 package com.kh.CreditOnly_BackEnd.repository;
 
 import com.kh.CreditOnly_BackEnd.entity.AnCheckEntity;
+import com.kh.CreditOnly_BackEnd.entity.MemberEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -14,4 +15,6 @@ public interface AnCheckRepository extends JpaRepository<AnCheckEntity, Long> {
     AnCheckEntity findByIdAndMember_Email(Long id, String email);
     Optional<AnCheckEntity> findByAnnouncement_IdAndMember_Id(Long announcementId, Long memberId);
     List<AnCheckEntity> findByAnnouncement_Id(Long announcementId);
+
+    List<AnCheckEntity> findAllByMember(MemberEntity memberEntity);
 }
