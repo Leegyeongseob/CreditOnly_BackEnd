@@ -44,7 +44,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                 .accessDeniedHandler(jwtAccessDeniedHandler)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/", "/static/**", "/auth/**").permitAll()
+                .antMatchers("/", "/static/**", "/auth/**","/api/**").permitAll()
                 .antMatchers("/v2/api-docs", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**", "/swagger/**", "/sign-api/exception").permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .antMatchers("/favicon.ico","/manifest.json").permitAll()
@@ -59,7 +59,8 @@ public class WebSecurityConfig implements WebMvcConfigurer {
     @Override  // 메소드 오버라이딩, localhost:3000 번으로 들어오는 요청 허가
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://192.168.10.26:3000")
+                .allowedOrigins("http://localhost:3000")
+                .allowedOrigins("http://localhost:5000")
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowCredentials(true);
