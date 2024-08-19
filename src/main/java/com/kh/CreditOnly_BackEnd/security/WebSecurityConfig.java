@@ -59,8 +59,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
     @Override  // 메소드 오버라이딩, localhost:3000 번으로 들어오는 요청 허가
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000")
-                .allowedOrigins("http://localhost:5000")
+                .allowedOrigins("http://localhost:3000", "http://localhost:5000")
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowCredentials(true);
