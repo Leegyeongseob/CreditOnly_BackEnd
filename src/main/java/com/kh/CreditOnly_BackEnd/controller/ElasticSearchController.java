@@ -23,16 +23,17 @@ public class ElasticSearchController {
 
     @PostMapping("/similarity_search")
     public ResponseEntity<String> postSimilaritySearch(@RequestBody String query) {
-        String url = flaskServerUrl + "/api/elastic/similarity_search"; // 수정된 경로
+        String url = flaskServerUrl + "/api/elastic/similarity_search";
 
-        // 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> entity = new HttpEntity<>(query, headers);
 
+        // Flask 서버에 POST 요청을 보내고 결과를 받아옴
         ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
+
+        // Flask 서버로부터 받은 데이터를 그대로 React로 전달
         return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
     }
-
 }
