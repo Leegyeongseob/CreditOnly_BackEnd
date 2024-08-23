@@ -6,8 +6,7 @@ import com.kh.CreditOnly_BackEnd.dto.reqdto.MemberUpdateReqDto;
 import com.kh.CreditOnly_BackEnd.dto.resdto.MemberResDto;
 import com.kh.CreditOnly_BackEnd.entity.AnCheckEntity;
 import com.kh.CreditOnly_BackEnd.entity.MemberEntity;
-import com.kh.CreditOnly_BackEnd.repository.AnCheckRepository;
-import com.kh.CreditOnly_BackEnd.repository.MemberRepository;
+import com.kh.CreditOnly_BackEnd.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
@@ -30,6 +29,11 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder; // PasswordEncoder 주입
     private final AnCheckRepository anCheckRepository;
+    private final CommentRepository commentRepository;
+    private final CommentLikeRepository commentLikeRepository;
+    private final ChatConversationRepository chatConversationRepository;
+    private final ChatMessageRepository chatMessageRepository;
+    private final HelpRepository helpRepository;
     @PersistenceContext
     EntityManager em;
     // 사용자 정보 가져오기
@@ -64,17 +68,35 @@ public class MemberService {
             return "회원 정보 수정 중 오류가 발생했습니다.";
         }
     }
+    //회원정보 삭제
     public String memberDelete(String email) {
         try {
             // 회원 정보 조회
             MemberEntity memberEntity = memberRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."));
+
             // 회원과 관련된 모든 AnCheckEntity 삭제
-            List<AnCheckEntity> anCheckEntities = anCheckRepository.findAllByMember(memberEntity);
-            anCheckRepository.deleteAll(anCheckEntities);
-            //회원 정보 삭제
+            anCheckRepository.deleteAllByMember(memberEntity);
+
+            // 회원이 작성한 모든 댓글의 좋아요 삭제
+            commentLikeRepository.deleteAllByMemberId(memberEntity.getId());
+
+            // 회원이 작성한 모든 댓글 삭제
+            commentRepository.deleteAllByMemberId(memberEntity.getId());
+
+            // 회원의 채팅 메시지 삭제
+            chatMessageRepository.deleteAllBySender(memberEntity.getEmail());
+
+            // 회원의 채팅 대화 삭제
+            chatConversationRepository.deleteAllByMember(memberEntity);
+
+            //문의하기 삭제
+            helpRepository.deleteAllByEmail(memberEntity.getEmail());
+
+            // 회원 정보 삭제
             memberRepository.delete(memberEntity);
-            return "회원 정보가 삭제되었습니다.";
+
+            return "회원 정보가 성공적으로 삭제되었습니다.";
         } catch (Exception e) {
             return "회원 정보 삭제 중 오류가 발생했습니다.: " + e.getMessage();
         }

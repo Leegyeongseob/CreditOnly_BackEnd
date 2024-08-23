@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface HelpRepository extends JpaRepository<HelpEntity, Long> {
     Optional<List<HelpEntity>> findByEmail(String email);
 
+    void deleteAllByEmail(String email);
 }

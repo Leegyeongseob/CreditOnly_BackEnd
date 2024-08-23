@@ -16,5 +16,5 @@ public interface InformationRepository extends JpaRepository<InformationEntity, 
     // 전체 정보를 조회하는 메서드 (페이지네이션 제거)
     List<InformationEntity> findAll();
 
-    Optional<List<InformationEntity>> findByTitleLikeOrContentLike(String data, String data1);
+    Optional<List<InformationEntity>> findByTitleContainingOrContentContaining(String data, String data1);
 }

@@ -79,7 +79,7 @@ public class MainService {
                 }
             }
             //신용정보 관련된 데이터를 가져옵니다.
-            Optional<List<InformationEntity>> informationEntitiesOpt = informationRepository.findByTitleLikeOrContentLike(data, data);
+            Optional<List<InformationEntity>> informationEntitiesOpt = informationRepository.findByTitleContainingOrContentContaining(data, data);
             if(informationEntitiesOpt.isPresent()){
                 List<InformationEntity> informationEntities = informationEntitiesOpt.get();
                 for(InformationEntity informationEntity : informationEntities){

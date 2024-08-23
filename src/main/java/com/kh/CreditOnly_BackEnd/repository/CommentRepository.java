@@ -10,4 +10,6 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
     // 특정 정보 ID에 따른 댓글들을 조회하는 메서드
     List<CommentEntity> findByInformationId(Long informationId);
+
+    void deleteAllByMemberId(Long id);
 }

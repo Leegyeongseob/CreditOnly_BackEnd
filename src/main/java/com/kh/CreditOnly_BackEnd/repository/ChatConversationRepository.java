@@ -9,4 +9,7 @@ import java.util.List;
 public interface ChatConversationRepository extends JpaRepository<ChatConversationEntity, Long> {
 
     List<ChatConversationEntity> findByMemberOrderByCreatedAtDesc(MemberEntity member);
+
+
+    void deleteAllByMember(MemberEntity memberEntity);
 }

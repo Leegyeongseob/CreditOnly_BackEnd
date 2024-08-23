@@ -18,4 +18,5 @@ public interface CommentLikeRepository extends JpaRepository<CommentLikeEntity, 
     // 특정 댓글의 좋아요 수 조회
     long countByCommentIdAndLikeType(Long commentId, LikeType likeType);
 
+    void deleteAllByMemberId(Long id);
 }
