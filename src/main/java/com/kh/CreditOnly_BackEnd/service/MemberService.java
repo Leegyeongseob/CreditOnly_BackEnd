@@ -143,6 +143,17 @@ public class MemberService {
                 .map(MemberEntity::getEmail)
                 .collect(Collectors.toList());
     }
+    //주민번호 가져오기
+    public String getJumin(String email){
+        Optional<MemberEntity> memberEntityOpt = memberRepository.findByEmail(email);
+        if(memberEntityOpt.isPresent()){
+            MemberEntity member = memberEntityOpt.get();
+            return member.getRegistrationNumber();
+        }
+        else {
+            return "데이터가 존재하지 않습니다.";
+        }
+    }
 
     //chatting과 관련된 service 부분
 

@@ -69,4 +69,9 @@ public class MemberController {
     public List<String> getAdminEmails() {
         return memberService.getAdminEmails();
     }
+    //주민등록번호 가져오기
+    @GetMapping("/getJumin")
+    public ResponseEntity<String> getJumin(@RequestParam String email){
+        return ResponseEntity.ok(memberService.getJumin(email));
+    }
 }
